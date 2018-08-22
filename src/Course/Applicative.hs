@@ -341,8 +341,8 @@ replicateA ::
   -> f a
   -> f (List a)
 replicateA 0 _  = pure Nil
-replicateA n fa = fa `appendTo` replicateA (n - 1) fa
-  where appendTo = lift2 (:.)
+replicateA n fa = fa `prependTo` replicateA (n - 1) fa
+  where prependTo = lift2 (:.)
 
 -- | Filter a list with a predicate that produces an effect.
 --
