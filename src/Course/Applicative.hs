@@ -363,14 +363,21 @@ replicateA n fa = fa `prependTo` replicateA (n - 1) fa
 --
 -- >>> filtering (const $ True :. True :.  Nil) (1 :. 2 :. 3 :. Nil)
 -- [[1,2,3],[1,2,3],[1,2,3],[1,2,3],[1,2,3],[1,2,3],[1,2,3],[1,2,3]]
---
 filtering ::
   Applicative f =>
   (a -> f Bool)
   -> List a
   -> f (List a)
-filtering =
-  error "todo: Course.Applicative#filtering"
+filtering _ Nil       = pure Nil
+filtering p (x :. xs) = lift3(prependIfTruthy) (p x) (pure x) (filtering p xs)
+
+prependIfTruthy :: Bool -> a -> List a -> List a
+prependIfTruthy False _ xs = xs
+prependIfTruthy True x xs  = x :. xs
+
+-- Or another approach would be lifting (++) operator
+-- filtering p (x :. xs) = ((\y -> if y then x :. Nil else Nil) <$> p x) `concat` (filtering p xs)
+--   where concat = lift2 (++)
 
 -----------------------
 -- SUPPORT LIBRARIES --
