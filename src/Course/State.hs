@@ -135,8 +135,8 @@ findM ::
   (a -> f Bool)
   -> List a
   -> f (Optional a)
-findM =
-  error "todo: Course.State#findM"
+findM _ Nil       = return Empty
+findM f (a :. as) = f a >>= \t -> if t then return (Full a) else findM f as
 
 -- | Find the first element in a `List` that repeats.
 -- It is possible that no element repeats, hence an `Optional` result.
@@ -149,8 +149,11 @@ firstRepeat ::
   Ord a =>
   List a
   -> Optional a
-firstRepeat =
-  error "todo: Course.State#firstRepeat"
+firstRepeat Nil = Empty
+firstRepeat xs = let (x, _) = (runState st S.empty) in x
+    where st = findM f xs
+          f x = State $ \set -> if S.member x set then (True, set) else (False, S.insert x set)
+
 
 -- | Remove all duplicate elements in a `List`.
 -- /Tip:/ Use `filtering` and `State` with a @Data.Set#Set@.
