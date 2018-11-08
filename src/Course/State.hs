@@ -75,8 +75,8 @@ instance Functor (State s) where
     (a -> b)
     -> State s a
     -> State s b
-  f <$> State g = State $ \x -> let (result, nextState) = g x
-                               in (f result, nextState)
+  f <$> st = State $ \initialState ->
+    let (value, nextState) = runState st initialState in (f value, nextState)
 
 -- | Implement the `Applicative` instance for `State s`.
 --
@@ -98,8 +98,8 @@ instance Applicative (State s) where
     State s (a -> b)
     -> State s a
     -> State s b
-  fs <*> s = State $ \x -> let (f, fState) = runState fs x
-                            in runState (f <$> s) fState
+  sf <*> sa = State $ \initialState -> let (f, s) = runState sf initialState
+    in runState (f <$> sa) s
 
 -- | Implement the `Bind` instance for `State s`.
 --
@@ -113,8 +113,9 @@ instance Monad (State s) where
     (a -> State s b)
     -> State s a
     -> State s b
-  f =<< stateA = State $ \s -> let (stateB, s') = runState (f <$> stateA) s
-                            in runState stateB s'
+  f =<< st = State $ \initialState ->
+    let (value, nextState) = runState st initialState
+     in runState (f value) nextState
 
 -- | Find the first element in a `List` that satisfies a given predicate.
 -- It is possible that no element is found, hence an `Optional` result.
