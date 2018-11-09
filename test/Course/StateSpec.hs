@@ -21,7 +21,8 @@ import           Course.Monad
 import           Course.Optional          (Optional (..))
 import           Course.State             (State (..), distinct, eval, exec,
                                            findM, firstRepeat, get, isHappy,
-                                           put, runState)
+                                           put, runState, squaresOfDigits,
+                                           sumOfSquaredDigits)
 
 spec :: Spec
 spec = do
@@ -90,3 +91,14 @@ spec = do
     it "7" $ isHappy 7 `shouldBe` True
     it "42" $ isHappy 42 `shouldBe`  False
     it "44" $ isHappy 44 `shouldBe`  True
+
+  describe "squaresOfDigits" $ do
+    it "should return [16, 16]" $ squaresOfDigits (listh "44") `shouldBe` (listh [16, 16])
+    it "should return [49]" $ squaresOfDigits (listh "7") `shouldBe` (listh [49])
+
+  describe "sumOfSquaredDigits" $ do
+    it "should return 7 -> 49" $ sumOfSquaredDigits 7 `shouldBe` 49
+    it "should return 49 -> 97" $ sumOfSquaredDigits 49 `shouldBe` 97
+    it "should return 97 -> 130" $ sumOfSquaredDigits 97 `shouldBe` 130
+    it "should return 130 -> 10" $ sumOfSquaredDigits 130 `shouldBe` 10
+    it "should return 10 -> 1" $ sumOfSquaredDigits 10 `shouldBe` 1

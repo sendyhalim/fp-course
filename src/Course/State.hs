@@ -11,6 +11,7 @@ import           Course.Functor
 import           Course.List
 import           Course.Monad
 import           Course.Optional
+import qualified Data.Char          as Char
 import qualified Data.Set           as S
 import qualified Prelude            as P
 
@@ -192,5 +193,28 @@ distinct xs = fst $ runState (filtering p xs) S.empty
 isHappy ::
   Integer
   -> Bool
-isHappy =
-  error "todo: Course.State#isHappy"
+isHappy _num = contains 1 (firstRepeat $ produce sumOfSquaredDigits $ P.fromIntegral _num)
+
+-- Below implementation is using findM instead of firstRepeat
+----------------------
+-- isHappy _num = S.member 1 $ fst . snd $ runState (findM p (listh [1..])) (S.empty, num)
+--   where
+--     num = P.fromIntegral _num :: Int
+--     p _ = State f
+--     f state
+--       | S.member num set = (True, (set, s))
+--       | S.member 1 set = (True, (set, s))
+--       | otherwise = (False, (S.insert s set, s))
+--       where (set, previousNumber) = state
+--             s = sumOfSquaredDigits previousNumber
+
+sumOfSquaredDigits :: Int -> Int
+sumOfSquaredDigits = sum . squaresOfDigits . toDigits
+
+toDigits :: Int -> List Char
+toDigits = listh . show
+
+-- >>> squareOfDigits 4
+-- 15
+squaresOfDigits :: List Char -> List Int
+squaresOfDigits digits = ((P.^2) . Char.digitToInt) <$> digits
