@@ -205,8 +205,8 @@ flatMap ::
   (a -> List b)
   -> List a
   -> List b
-flatMap =
-  error "todo: Course.List#flatMap"
+flatMap _ Nil       = Nil
+flatMap f (x :. xs) = f x ++ flatMap f xs
 
 -- | Flatten a list of lists to a list (again).
 -- HOWEVER, this time use the /flatMap/ function that you just wrote.
