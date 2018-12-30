@@ -94,7 +94,7 @@ instance Applicative (State s) where
   pure ::
     a
     -> State s a
-  pure x = State $ \y -> (x, y)
+  pure value = State $ \initialState -> (value, initialState)
   (<*>) ::
     State s (a -> b)
     -> State s a
@@ -218,3 +218,6 @@ toDigits = listh . show
 -- 15
 squaresOfDigits :: List Char -> List Int
 squaresOfDigits digits = ((P.^2) . Char.digitToInt) <$> digits
+
+alterState :: (s -> s) -> State s ()
+alterState f = State $ \s -> ((), f s)
