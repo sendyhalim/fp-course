@@ -43,7 +43,7 @@ instance Functor f => Functor (StateT s f) where
     -> StateT s f a
     -> StateT s f b
   f <$> st = StateT $ \initialState ->
-    let functor = (runStateT st) initialState
+    let functor = runStateT st initialState
      in liftFToStateValue f <$> functor
 
 -- | Implement the `Applicative` instance for @StateT s f@ given a @Monad f@.
@@ -74,9 +74,9 @@ instance Monad f => Applicative (StateT s f) where
     -> StateT s f a
     -> StateT s f b
 
-  (<*>) =
-    error "todo: Course.StateT (=<<)#instance (StateT s f)"
-
+  stf <*> sta = StateT $ \initialState -> do
+    (f, aState) <- runStateT stf initialState
+    runStateT (f <$> sta) aState
 
 -- | Implement the `Monad` instance for @StateT s f@ given a @Monad f@.
 -- Make sure the state value is passed through in `bind`.
