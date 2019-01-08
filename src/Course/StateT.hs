@@ -179,8 +179,9 @@ distinct' ::
   (Ord a, Num a) =>
   List a
   -> List a
-distinct' =
-  error "todo: Course.StateT#distinct'"
+distinct' Nil = Nil
+distinct' as = eval' (filtering p as) S.empty
+  where p x = state' $ \set -> if S.member x set then (False, set) else (True, S.insert x set)
 
 -- | Remove all duplicate elements in a `List`.
 -- However, if you see a value greater than `100` in the list,
