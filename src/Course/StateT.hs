@@ -198,8 +198,11 @@ distinctF ::
   (Ord a, Num a) =>
   List a
   -> Optional (List a)
-distinctF =
-  error "todo: Course.StateT#distinctF"
+distinctF as = evalT (filtering predicate as) S.empty
+  where
+    predicate x
+      | x > 100 = StateT $ const Empty
+      | otherwise = StateT $ \set -> Full $ if S.member x set then (False, set) else (True, S.insert x set)
 
 -- | An `OptionalT` is a functor of an `Optional` value.
 data OptionalT f a =
