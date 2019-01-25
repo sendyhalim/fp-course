@@ -328,8 +328,12 @@ distinctG ::
   (Integral a, Show a) =>
   List a
   -> Logger Chars (Optional (List a))
-distinctG =
-  error "todo: Course.StateT#distinctG"
+distinctG as = runOptionalT $ evalT (filtering (StateT . p) as) S.empty
+  where p a
+          | a > 100 = const $ OptionalT $ log1 ("aborting > 100: " ++ show' a) Empty
+          | even a  = \set -> OptionalT $ log1 ("even number: " ++ show' a) $ produceStateResult set
+          | otherwise  = \set -> OptionalT $ pure $ produceStateResult set
+          where produceStateResult set = Full $ if S.member a set then (False, set) else (True, S.insert a set)
 
 onFull ::
   Applicative f =>
