@@ -249,11 +249,10 @@ instance Monad f => Applicative (OptionalT f) where
     -> OptionalT f a
     -> OptionalT f b
   optionalTf <*> optionalT = OptionalT $ do
-    f <- runOptionalT optionalTf
-    onFull ((\f' -> do
-        optional <- runOptionalT optionalT
-        return (f' <$> optional)
-      )) f
+    maybeF <- runOptionalT optionalTf
+    let runF f = runOptionalT optionalT >>= return . (<$>)(f)
+    onFull runF maybeF
+
 
 -- | Implement the `Monad` instance for `OptionalT f` given a Monad f.
 --
